@@ -22,33 +22,34 @@
  * SOFTWARE.
  */
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Threads Creation - Part 1, Thread Capabilities & Debugging
  * https://www.udemy.com/java-multithreading-concurrency-performance-optimization
  */
 public class Main2 {
 
-    public static void main(String [] args) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Code that will run in a new thread
-                throw new RuntimeException("Intentional Exception");
-            }
-        });
+  public static void main(String[] args) {
+    Logger logger = getLogger();
+    Thread thread = new Thread(() -> {
+      //Code that will run in a new thread
+      throw new RuntimeException("Intentional Exception");
+    });
 
-        thread.setName("Misbehaving thread");
+    thread.setName("Misbehaving thread");
 
-        thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+    thread.setUncaughtExceptionHandler(
+        (t, e) -> logger.log(Level.SEVERE,
+            "A critical error happened in thread {0} the error is {1}",
+            new Object[]{t.getName(), e.getMessage()}));
+    thread.start();
 
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                System.out.println("A critical error happened in thread " + t.getName()
-                        + " the error is " + e.getMessage());
-            }
-        });
-        thread.start();
+  }
 
-    }
+  private static Logger getLogger() {
+    return Logger.getLogger(Main1.class.getName());
+  }
 
 }

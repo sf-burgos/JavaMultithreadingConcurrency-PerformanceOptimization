@@ -22,28 +22,35 @@
  * SOFTWARE.
  */
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *  Threads Creation - Part 1, Thread Capabilities & Debugging
+ * Threads Creation - Part 1, Thread Capabilities & Debugging
  * https://www.udemy.com/java-multithreading-concurrency-performance-optimization
  */
 public class Main1 {
 
-    public static void main(String[] args) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Code that will run in  a new thread
-                System.out.println("we are now in thread "+Thread.currentThread().getName());
-                System.out.println("Current thread priority is " + Thread.currentThread().getPriority());
-            }
-        });
+  public static void main(String[] args) {
+      Logger logger = getLogger();
+      Thread thread = new Thread(() -> {
+      //Code that will run in  a new thread
+      logger.log(Level.INFO, "We are now in thread {0}.", Thread.currentThread().getName());
+      logger.log(Level.INFO, "Current thread priority is {0}",
+          Thread.currentThread().getPriority());
+    });
 
-        thread.setName("New Worker Thread");
+    thread.setName("New Worker Thread");
+    thread.setPriority(Thread.MAX_PRIORITY);
 
-        thread.setPriority(Thread.MAX_PRIORITY);
+    logger.log(Level.INFO, "We are in thread: {0} before starting a new thread",
+        Thread.currentThread().getName());
+    thread.start();
+    logger.log(Level.INFO, "We are in thread: {0} after starting a new thread",
+        Thread.currentThread().getName());
+  }
 
-        System.out.println("We are in thread: " + Thread.currentThread().getName()+ " before starting a new thread");
-        thread.start();
-        System.out.println("We are in thread: " + Thread.currentThread().getName()+ " after starting a new thread");
+    private static Logger getLogger() {
+        return Logger.getLogger(Main1.class.getName());
     }
 }
